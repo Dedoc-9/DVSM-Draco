@@ -20,4 +20,4 @@ Test: cargo test --release -- --nocapture --test-threads=1
 
 ## Legal: AGPL-3.0 Open Source
 
-For custom licensing, contact: bigdilly95@gmail.com
+For custom licensing, contact the Author: Daniel J. Dillberg at bigdilly95@gmail.com
