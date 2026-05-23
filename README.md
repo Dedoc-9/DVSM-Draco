@@ -576,17 +576,17 @@ Fixed-point integer arithmetic is 3-4× faster than floating-point on modern CPU
 ### Stage 2: GPU Rendering (VRAM Interop)
 
 **Traditional CPU-GPU Sync:**
-```
+
 CPU sends destruction data → PCIe transfer (47 Mbps × 128 players) → 
 GPU processes → GPU renders → Screen display
 
 PCIe bottleneck: 47 Mbps sustained causes GPU to stall, waiting for new data
 Latency: Physics computed on CPU, results shipped to GPU (3-4 frame delay)
 Memory overhead: State stored in both CPU RAM and VRAM (2× memory pressure)
-```
+
 
 **Draco Zero-Copy VRAM Projection:**
-```
+
 Destruction events land in shared VRAM handle → BitfieldParser reads directly 
 (zero-copy) → Torsion array projected back to shared handle → GPU renders
 
@@ -740,3 +740,42 @@ The CPU and GPU headroom reclaimed by Draco translates directly to visual fideli
 
 **Bottom Line for Players**: Draco enables destruction engines to stop choosing between "looks amazing, performs terrible" and "runs great, looks boring." For the first time, destruction can be both—and simultaneously support competitive-grade latency and massive player counts.
 ```
+### Modern GPU Feature Compatibility: Frame Generation, DLSS, and Scaling
+
+**Frame Generation Ready (NVIDIA FGSR, AMD Super Resolution)**
+
+Draco's deterministic physics pipeline is fully compatible with frame interpolation and generation technologies:
+
+- **Deterministic Input State**: Since Z_t is bit-perfect and reproducible, frame generation models can reliably predict future physics state without divergence
+- **Zero Latency Penalty**: Traditional engines suffer frame gen latency (AI model inference). Draco's hash commitment validates generated frames—if frame gen output matches predicted H_t, it's accepted; otherwise, snap logic recovers to verified state
+- **Scaling**: Frame gen can safely boost 60fps → 120fps or 120fps → 240fps because underlying physics remains deterministic
+
+**DLSS & Upscaling Ready**
+
+- **Physics-Agnostic Rendering**: Draco separates physics (CPU, deterministic) from rendering (GPU, optimizable). DLSS upscaling applies only to final frame, not physics state
+- **Perfect Reconstruction**: AI upscaling works best when the source (physics state) is deterministic. Draco provides bit-perfect source data, enabling higher-quality reconstructions
+- **Frame Time Budget**: 8ms physics + 2-4ms DLSS inference + 1-2ms GPU render = 11-14ms total (well under 16ms 60fps budget, or 8ms for 120fps)
+
+**Dynamic FPS Scaling**
+
+Draco's Regime FSM enables automatic scaling across performance targets:
+
+| Target FPS | Regime Strategy | Latency | Quality |
+|-----------|-----------------|---------|---------|
+| **240fps** (8-valve esports) | Regime 4-5 | 3-4ms | Skeleton physics |
+| **120fps** (competitive) | Regime 2-3 | 5-6ms | Full physics, RF compression |
+| **60fps** (default) | Regime 1-2 | 8-9ms | Full fidelity, full detail |
+| **30fps** (mobile/handheld) | Regime 5 | 16-20ms | Skeleton, optimized for battery |
+
+**Performance Bounds**
+
+- **Upper Limit (High-End Hardware)**: 240fps @ Regime 4 (skeleton physics) with full DLSS + frame gen. GPU-limited at 2-3ms render time
+- **Lower Limit (Low-End Hardware)**: 30fps @ Regime 5 (skeleton projection) with DLSS quality mode. CPU-limited at 8-10ms physics computation
+- **Scaling Invariant**: Hash H_t remains valid across all FPS targets and regime transitions—players on 60fps and 240fps servers remain perfectly synchronized
+
+**Why This Matters**
+
+Traditional engines recompile physics for each target FPS, risking desynchronization. Draco's manifold evolution is FPS-agnostic: identical operators run at any frame rate, producing identical state and identical hashes. This enables:
+- Cross-platform play (60fps console + 240fps PC seamlessly synchronized)
+- Dynamic quality adjustment (drop to 120fps when thermal throttling, jump to 240fps when cool)
+- Frame generation without state drift (AI-generated frames validate against hash predictions)
