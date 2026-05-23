@@ -673,33 +673,42 @@ Professional esports players react at ~150ms. Draco's 8ms latency vs traditional
 
 **Match Scenario: 128 Players, 47 Destruction Events/Sec, 60fps Target**
 
-```
-TRADITIONAL ENGINE:
-┌─────────────────────────────────────────────┐
-│ CPU Physics:     14-21ms per frame (FAILS)  │
-│ PCIe Sync:       4-6ms                      │
-│ GPU Render:      4-5ms                      │
-│ Latency:         16-18ms                    │
-│ Status:          BROKEN at 64+ players      │
-└─────────────────────────────────────────────┘
+```markdown
+### Full-Stack Numbers: The Complete Picture
 
-DRACO ENGINE:
-┌─────────────────────────────────────────────┐
-│ CPU Physics:     4-7ms per frame (HEADROOM) │
-│ PCIe Sync:       <0.5ms                     │
-│ GPU Render:      1-2ms                      │
-│ Latency:         8-9ms                      │
-│ Status:          STABLE at 128 players      │
-└─────────────────────────────────────────────┘
+**Match Scenario: 128 Players, 47 Destruction Events/Sec, 60fps Target**
 
-GAINS:
-├─ CPU overhead:        -70%
-├─ Memory bandwidth:     -77%
-├─ GPU stall time:       -92%
-├─ End-to-end latency:   -50%
-├─ FPS headroom:         +20fps
-└─ Scalability:          4× player count
+**TRADITIONAL ENGINE:**
 ```
+CPU Physics:     14-21ms per frame (FAILS)
+PCIe Sync:       4-6ms
+GPU Render:      4-5ms
+Latency:         16-18ms
+Status:          BROKEN at 64+ players
+```
+
+**DRACO ENGINE:**
+```
+CPU Physics:     4-7ms per frame (HEADROOM)
+PCIe Sync:       <0.5ms
+GPU Render:      1-2ms
+Latency:         8-9ms
+Status:          STABLE at 128 players
+```
+
+**PERFORMANCE GAINS:**
+
+| Metric | Improvement |
+|--------|-------------|
+| CPU overhead | -70% |
+| Memory bandwidth | -77% |
+| GPU stall time | -92% |
+| End-to-end latency | -50% |
+| FPS headroom | +20fps |
+| Scalability | 4× player count |
+```
+
+Replace the broken box section with this GitHub-compatible version above.
 ---
 
 **Real-World Impact:**
