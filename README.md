@@ -707,8 +707,6 @@ Status:          STABLE at 128 players
 | FPS headroom | +20fps |
 | Scalability | 4× player count |
 ```
-
-Replace the broken box section with this GitHub-compatible version above.
 ---
 
 **Real-World Impact:**
