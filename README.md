@@ -4,7 +4,7 @@ DVSM v3.3 physics kernel integrated into Draco_BF6 engine.
 
 ## Quick Start
 
-Clone: git clone [https://github.com/your-username/draco-bf6-physics.git](https://github.com/Dedoc-9/DVSM-Draco/tree/main)
+Clone: git clone (https://github.com/Dedoc-9/DVSM-Draco/tree/main)
 Build: cargo build --release
 Test: cargo test --release -- --nocapture --test-threads=1
 
