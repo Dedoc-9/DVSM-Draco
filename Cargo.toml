@@ -1,0 +1,53 @@
+[package]
+name = "draco-bf6-edition"
+version = "1.0.0-alpha.1"
+edition = "2021"
+description = "Draco Shared Handle Reader for Battlefield 6 - Phase I.4a Safe-Path DX12 Interop"
+authors = ["Daniel J. Dillberg"]
+
+[dependencies]
+windows = { version = "0.52", features = [
+    "Win32_Graphics_Direct3D12",
+    "Win32_Graphics_Dxgi",
+    "Win32_Graphics_Dxgi_Common",
+    "Win32_Foundation",
+    "Win32_System_LibraryLoader",
+    "Win32_System_Memory",
+    "Win32_System_Diagnostics_Debug",
+] }
+tokio = { version = "1.35", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = "0.4"
+
+# Phase I.4b: DXGI Overlay & HUD Rendering
+hudhook = "0.1"
+imgui = "0.12"
+
+# Phase II: DVSM v3.3 Physics Engine Integration
+# Fixed-point determinism + manifold evolution
+nalgebra = "0.33"          # Linear algebra for manifold projections, Lie-bracket
+bytemuck = "1.14"          # Transmute-safe fixed-point state serialization
+num-traits = "0.2"         # Numeric traits
+
+# Compression codec (SAEC, RF/ELF/Bio3D)
+zstd = "0.13"              # ZSTD for secondary compression (optional)
+
+# Determinism validation
+crc = "3.0"                # CRC-32 for SAEC header (polynomial 0x04C11DB7)
+sha2 = "0.10"              # SHA256 for extended forensic hashing (optional)
+
+[[bin]]
+name = "bf6_launcher"
+path = "src/bin/bf6_launcher.rs"
+
+[lib]
+name = "draco_bf6_interop"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
